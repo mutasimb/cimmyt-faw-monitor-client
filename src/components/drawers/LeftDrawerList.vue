@@ -1,0 +1,77 @@
+<template>
+  <q-list class="q-mt-md"> <!-- when not logged in -->
+
+    <template v-if="isActiveLayoutData">
+
+      <ListItem route="data-charts" icon="insert_chart" label="Charts" />
+      <!-- <ListItem route="bubble-plot" icon="bubble_chart" label="Bubble Plot" :disable="true" /> -->
+      <!-- <ListItem path="/data/table" route="data-table" icon="view_list" label="Data Tables" /> -->
+
+    </template>
+
+    <template v-else> <!-- when logged in -->
+
+      <ListItem route="dashboard-home" icon="home" label="Home" />
+
+      <template v-if="isDataCollector">
+
+      <q-separator spaced />
+      <q-item-label header>Data Collection Forms</q-item-label>
+
+      <ListItem route="form-trap" icon="group_work" label="Trap Registration" />
+      <ListItem route="form-scouting" icon="note_add" label="Scouting Data" />
+
+      </template>
+
+      <!-- <template v-if="isDataViewer">
+
+      <q-separator spaced />
+      <q-item-label header>Monitoring: Collected Field Data</q-item-label>
+
+      <ListItem route="report-traps" icon="group_work" label="Trap Reports (Coming soon)" :disable="true" />
+      <ListItem route="report-users" icon="nature_people" label="Collector Reports (Coming soon)" :disable="true" />
+      <ListItem route="report-maps" icon="map" label="Maps (Coming soon)" :disable="true" />
+
+      </template> -->
+
+      <q-separator spaced />
+      <q-item-label header>Monitoring: Aggregated Data</q-item-label>
+
+      <ListItem route="dashboard-charts" icon="insert_chart" label="Charts" />
+      <!-- <ListItem route="dashboard-bubble-plots" icon="bubble_chart" label="Bubble Plots (Coming soon)" :disable="true" /> -->
+      <!-- <ListItem route="dashboard-maps" icon="map" label="Maps (Coming soon)" :disable="true" /> -->
+      <!-- <ListItem route="dashboard-tables" icon="view_list" label="Tables (Coming soon)" :disable="true" /> -->
+
+    </template>
+
+  </q-list>
+</template>
+
+<script>
+import { defineComponent, computed } from 'vue'
+import { useRoute } from 'vue-router'
+import { useStore } from 'vuex'
+
+import ListItem from './DrawerListItem'
+
+export default defineComponent({
+  name: 'ComponentLeftDrawerList',
+  components: {
+    ListItem
+  },
+  setup () {
+    const
+      route = useRoute(),
+      { getters } = useStore(),
+      isActiveLayoutData = computed(() => route.meta.mode === 'data'),
+      isDataCollector = computed(() => getters.isDataCollector),
+      isDataViewer = computed(() => getters.isDataViewer)
+
+    return {
+      isActiveLayoutData,
+      isDataCollector,
+      isDataViewer
+    }
+  }
+})
+</script>
