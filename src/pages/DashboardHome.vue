@@ -34,8 +34,8 @@
 import { defineComponent, computed } from 'vue'
 import { useStore } from 'vuex'
 
-import SeasonSelector from '../components/SeasonSelector'
-import Charts from '../components/charts/DataCharts'
+import SeasonSelector from '../components/SeasonSelector.vue'
+import Charts from '../components/charts/DataCharts.vue'
 
 export default defineComponent({
   name: 'PageDashboardHome',

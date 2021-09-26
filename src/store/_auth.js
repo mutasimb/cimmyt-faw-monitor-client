@@ -1,5 +1,5 @@
-import { api } from '../boot/axios'
-import setAuthToken from '../utils/setAuthToken'
+import { api } from '../boot/axios.js'
+import setAuthToken from '../utils/setAuthToken.js'
 
 export default {
   state: {

@@ -13,7 +13,7 @@
 <script>
 import { defineComponent } from 'vue'
 
-import Header from '../components/headers/HeaderMain'
+import Header from '../components/headers/HeaderMain.vue'
 
 export default defineComponent({
   name: 'LayoutMain',

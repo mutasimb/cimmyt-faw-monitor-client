@@ -17,8 +17,8 @@
 <script>
 import { defineComponent, ref } from 'vue'
 
-import Header from '../components/headers/HeaderData'
-import LeftDrawerList from '../components/drawers/LeftDrawerList'
+import Header from '../components/headers/HeaderData.vue'
+import LeftDrawerList from '../components/drawers/LeftDrawerList.vue'
 
 export default defineComponent({
   name: 'LayoutData',

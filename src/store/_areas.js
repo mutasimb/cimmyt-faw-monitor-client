@@ -1,4 +1,4 @@
-import { api } from '../boot/axios'
+import { api } from '../boot/axios.js'
 
 export default {
   state: {

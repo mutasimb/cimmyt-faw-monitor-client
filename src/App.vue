@@ -13,7 +13,8 @@ import { defineComponent, ref, computed, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 
-import setAuthToken from './utils/setAuthToken'
+import setAuthToken from './utils/setAuthToken.js'
+
 export default defineComponent({
   name: 'AppRoot',
   setup () {

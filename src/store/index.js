@@ -1,15 +1,15 @@
 import { store } from 'quasar/wrappers'
 import { createStore } from 'vuex'
 
-import forms from './_forms'
-import auth from './_auth'
-import seasons from './_seasons'
-import traps from './_traps'
-import scoutings from './_scouting_data'
-import countries from './_countries'
-import gadm from './_gadm'
-import areas from './_areas'
-import aggData from './_aggregated_data'
+import forms from './_forms.js'
+import auth from './_auth.js'
+import seasons from './_seasons.js'
+import traps from './_traps.js'
+import scoutings from './_scouting_data.js'
+import countries from './_countries.js'
+import gadm from './_gadm.js'
+import areas from './_areas.js'
+import aggData from './_aggregated_data.js'
 
 /*
  * If not building with SSR mode, you can

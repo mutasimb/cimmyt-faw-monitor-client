@@ -29,7 +29,7 @@
 import { defineComponent, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
-import PartnerItem from './PartnerItem'
+import PartnerItem from './PartnerItem.vue'
 
 export default defineComponent({
   name: 'Header',

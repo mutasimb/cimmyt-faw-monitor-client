@@ -39,12 +39,12 @@ import { defineComponent, ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 
-import Step1 from '../components/forms/FormTrapSteps/Step1'
-import Step2 from '../components/forms/FormTrapSteps/Step2'
-import Step3 from '../components/forms/FormTrapSteps/Step3'
-import Step4 from '../components/forms/FormTrapSteps/Step4'
-import Step5 from '../components/forms/FormTrapSteps/Step5'
-import Step6 from '../components/forms/FormTrapSteps/Step6'
+import Step1 from '../components/forms/FormTrapSteps/Step1.vue'
+import Step2 from '../components/forms/FormTrapSteps/Step2.vue'
+import Step3 from '../components/forms/FormTrapSteps/Step3.vue'
+import Step4 from '../components/forms/FormTrapSteps/Step4.vue'
+import Step5 from '../components/forms/FormTrapSteps/Step5.vue'
+import Step6 from '../components/forms/FormTrapSteps/Step6.vue'
 import DialogBox from '../components/forms/FormDialog.vue'
 
 export default defineComponent({

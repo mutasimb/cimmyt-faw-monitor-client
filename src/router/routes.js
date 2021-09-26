@@ -20,7 +20,7 @@ const routes = [
   },
   {
     path: '/data/',
-    component: () => import('layouts/LayoutData'),
+    component: () => import('layouts/LayoutData.vue'),
     children: [
       {
         path: '',
@@ -29,38 +29,50 @@ const routes = [
       {
         name: 'data-charts',
         path: 'charts',
-        component: () => import('pages/DataCharts'),
+        component: () => import('pages/Charts.vue'),
         meta: { title: 'Charts', mode: 'data' }
       }
+      // {
+      //   name: 'data-bubble-plot',
+      //   path: 'bubble-plot',
+      //   component: () => import('pages/Charts.vue'),
+      //   meta: { title: 'Bubble Plot', mode: 'data' }
+      // }
       // { name: 'data-table', path: 'table', component: () => import('pages/DataTable.vue'), meta: { title: 'Data Table' } }
     ]
   },
   {
     path: '/dashboard/',
-    component: () => import('layouts/LayoutDashboard'),
+    component: () => import('layouts/LayoutDashboard.vue'),
     children: [
       {
         name: 'dashboard-home',
         path: '',
-        component: () => import('pages/DashboardHome'),
+        component: () => import('pages/DashboardHome.vue'),
         meta: { authRequired: true, title: 'FAW Monitor', mode: 'user' }
       },
       {
         name: 'dashboard-charts',
         path: 'charts',
-        component: () => import('pages/DataCharts'),
+        component: () => import('pages/Charts.vue'),
         meta: { authRequired: true, title: 'Charts', mode: 'user' }
       },
+      // {
+      //   name: 'dashboard-bubble-plot',
+      //   path: 'bubble-plot',
+      //   component: () => import('pages/Charts.vue'),
+      //   meta: { authRequired: true, title: 'Bubble Plot', mode: 'user' }
+      // },
       {
         name: 'form-trap',
         path: 'trap-registration',
-        component: () => import('pages/FormTrap'),
+        component: () => import('pages/FormTrap.vue'),
         meta: { authRequired: true, title: 'Trap Registration', mode: 'user' }
       },
       {
         name: 'form-scouting',
         path: 'scouting-data',
-        component: () => import('pages/FormScouting'),
+        component: () => import('pages/FormScouting.vue'),
         meta: { authRequired: true, title: 'Scouting', mode: 'user' }
       }
     ]

@@ -23,10 +23,10 @@
 import { defineComponent, ref, computed } from 'vue'
 import { useStore } from 'vuex'
 
-import Header from '../components/headers/HeaderDashboard'
-import LeftDrawerList from '../components/drawers/LeftDrawerList'
-import RightDrawerUserInfo from '../components/drawers/RightDrawerUserInfo'
-import RightDrawerList from '../components/drawers/RightDrawerList'
+import Header from '../components/headers/HeaderDashboard.vue'
+import LeftDrawerList from '../components/drawers/LeftDrawerList.vue'
+import RightDrawerUserInfo from '../components/drawers/RightDrawerUserInfo.vue'
+import RightDrawerList from '../components/drawers/RightDrawerList.vue'
 
 export default defineComponent({
   name: 'LayoutDashboard',

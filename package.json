@@ -3,7 +3,10 @@
   "version": "0.0.1",
   "description": "A Quasar Framework app",
   "productName": "Fall Armyworm Monitor",
-  "author": "Mu'tasim Billah <mutasim.wre@gmail.com>",
+  "author": {
+    "name": "Mutasim Billah",
+    "email": "mutasim.wre@gmail.com"
+  },
   "private": true,
   "scripts": {
     "lint": "eslint --ext .js,.vue ./",

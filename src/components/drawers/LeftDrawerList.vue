@@ -4,7 +4,7 @@
     <template v-if="isActiveLayoutData">
 
       <ListItem route="data-charts" icon="insert_chart" label="Charts" />
-      <!-- <ListItem route="bubble-plot" icon="bubble_chart" label="Bubble Plot" :disable="true" /> -->
+      <!-- <ListItem route="data-bubble-plot" icon="bubble_chart" label="Bubble Plot" /> -->
       <!-- <ListItem path="/data/table" route="data-table" icon="view_list" label="Data Tables" /> -->
 
     </template>
@@ -38,7 +38,7 @@
       <q-item-label header>Monitoring: Aggregated Data</q-item-label>
 
       <ListItem route="dashboard-charts" icon="insert_chart" label="Charts" />
-      <!-- <ListItem route="dashboard-bubble-plots" icon="bubble_chart" label="Bubble Plots (Coming soon)" :disable="true" /> -->
+      <!-- <ListItem route="dashboard-bubble-plot" icon="bubble_chart" label="Bubble Plot" /> -->
       <!-- <ListItem route="dashboard-maps" icon="map" label="Maps (Coming soon)" :disable="true" /> -->
       <!-- <ListItem route="dashboard-tables" icon="view_list" label="Tables (Coming soon)" :disable="true" /> -->
 
@@ -52,7 +52,7 @@ import { defineComponent, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 
-import ListItem from './DrawerListItem'
+import ListItem from './DrawerListItem.vue'
 
 export default defineComponent({
   name: 'ComponentLeftDrawerList',

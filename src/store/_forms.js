@@ -1,4 +1,4 @@
-import { api } from '../boot/axios'
+import { api } from '../boot/axios.js'
 
 import { blankForm as trapRegistrationBlank, compute as trapRegistrationCompute } from './forms/trapRegistration.js'
 import { blankForm as scoutingBlank, compute as scoutingCompute } from './forms/scouting.js'
