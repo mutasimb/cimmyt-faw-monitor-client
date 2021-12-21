@@ -8,48 +8,16 @@
       <AreaSelector @areaSelect="selectedArea = $event" />
 
       <q-toggle class="text-subtitle2 q-mt-md" dense v-model="additionalFilters" color="black" label="Additional filters and chart component controls:" />
-      <q-slide-transition>
-        <div v-show="additionalFilters">
-
-          <div class="text-subtitle1 q-mt-sm">Charts:</div>
-          <q-radio
-            v-model="selectedAreaOnly"
-            :val="true"
-            label="Display charts for selected area only"
-            color="black"
-          /><br/>
-          <q-radio
-            v-model="selectedAreaOnly"
-            :val="false"
-            label="Display charts for selected area and all of its sub-regions (requires downloding entire season's data)"
-            color="black"
-            @update:model-value="onDisplaySubRegionCharts"
-          />
-          <q-slide-transition>
-            <div v-show="!selectedAreaOnly">
-              <q-checkbox v-model="selectedSubAreas" label="Divisions" :val="1" color="black" v-show="!(selectedArea && selectedArea.level >= 1)"/>
-              <q-checkbox v-model="selectedSubAreas" label="Districts" :val="2" color="black" v-show="!(selectedArea && selectedArea.level >= 2)"/>
-              <q-checkbox v-model="selectedSubAreas" label="Upazilas" :val="3" color="black" v-show="!(selectedArea && selectedArea.level >= 3)"/>
-            </div>
-          </q-slide-transition>
-
-          <div class="text-subtitle1 q-mt-sm">Parameters to show:</div>
-          <q-checkbox v-model="activeParamsIndex" label="Moth Counts (/ day / trap)" :val="1" color="black"/>
-          <q-checkbox v-model="activeParamsIndex" label="SFW Infestation (%)" :val="2" color="black"/>
-          <q-checkbox v-model="activeParamsIndex" :label="activeCrop === 'Maize' ? 'Infested Whorl (%)' : 'Infested Plant (%)'" :val="3" color="black"/>
-          <q-checkbox v-if="activeCrop === 'Maize'" v-model="activeParamsIndex" label="Cob Infestation (%)" :val="4" color="black"/>
-
-          <div class="text-subtitle1 q-mt-sm">Chart components:</div>
-          <q-radio v-model="activeBar" val="se" label="Standard Error" color="black" />
-          <q-radio v-model="activeBar" val="sd" label="Standard Deviation" color="black" />
-          <q-radio v-model="activeBar" val="" label="None" color="black" />
-          <div class="text-caption text-italic">Standard Error / Deviation data are not available for upazila level charts</div>
-          <q-checkbox v-model="showCI" label="Show 95% Confidence Intervals" color="black"/>
-          <div class="text-caption text-italic">Confidence Intervals data are not available for upazila level charts</div>
-          <q-checkbox v-model="showTraps" label="Show trap counts" color="black"/>
-
-        </div>
-      </q-slide-transition>
+      <filter-slide
+        :show="additionalFilters"
+        :selectedArea="selectedArea"
+        @update:selectedAreaOnly="onUpdateSelectedAreaOnly"
+        @update:selectedSubAreas="onUpdateSelectedSubAreas"
+        @update:activeParamsIndex="onUpdateActiveParamsIndex"
+        @update:activeBar="onUpdateActiveBar"
+        @update:showCI="onUpdateShowCI"
+        @update:showTraps="onUpdateShowTraps"
+      />
     </q-card>
 
     <q-card :key="activeSeason._id + '_' + activeCrop" flat bordered class="col-12 q-pa-md q-mt-md text-center">
@@ -96,6 +64,7 @@ import { useStore } from 'vuex'
 
 import SeasonSelector from '../components/SeasonSelector'
 import AreaSelector from '../components/AreaSelector'
+import FilterSlide from '../components/FilterSlide.vue'
 import Charts from '../components/charts/DataCharts'
 
 export default defineComponent({
@@ -103,6 +72,7 @@ export default defineComponent({
   components: {
     SeasonSelector,
     AreaSelector,
+    FilterSlide,
     Charts
   },
   setup () {
@@ -163,9 +133,15 @@ export default defineComponent({
         () => activeCrop.value === 'Maize' ? activeParamsIndex.value
           : activeParamsIndex.value.filter(el => el < 4)
       ),
-      onDisplaySubRegionCharts = val => {
-        if (!val) dispatch('getAggregatedData', { season: activeSeason.value._id })
-      }
+      onUpdateSelectedAreaOnly = event => {
+        selectedAreaOnly.value = event
+        if (!event) dispatch('getAggregatedData', { season: activeSeason.value._id })
+      },
+      onUpdateSelectedSubAreas = event => { selectedSubAreas.value = event },
+      onUpdateActiveParamsIndex = event => { activeParamsIndex.value = event },
+      onUpdateActiveBar = event => { activeBar.value = event },
+      onUpdateShowCI = event => { showCI.value = event },
+      onUpdateShowTraps = event => { showTraps.value = event }
 
     watch(selectedArea, val => {
       dispatch('getAggregatedData', { season: activeSeason.value._id, area: val ? val._id : 'country' })
@@ -192,7 +168,12 @@ export default defineComponent({
       activeCountry,
       loading,
       showCharts,
-      onDisplaySubRegionCharts
+      onUpdateSelectedAreaOnly,
+      onUpdateSelectedSubAreas,
+      onUpdateActiveParamsIndex,
+      onUpdateActiveBar,
+      onUpdateShowCI,
+      onUpdateShowTraps
     }
   }
 })
