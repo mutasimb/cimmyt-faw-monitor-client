@@ -29,13 +29,16 @@
 
       <div class="text-subtitle1 q-mt-sm">Parameters to show:</div>
       <q-option-group
-        v-model="activeParamsIndex"
+        v-model="activeParams"
         inline
         :options="activeSeason.params
-          .map((param, i) => ({ label: param.nameParam + ' (' + param.unit + ')', value: i+1 }))"
+          .map(param => ({
+            label: param.nameParam + ' (' + param.unit + ')',
+            value: param.keyParam
+          }))"
         color="black"
         type="checkbox"
-        @update:model-value="onUpdateActiveParamsIndex"
+        @update:model-value="onUpdateActiveParams"
       />
 
       <div class="text-subtitle1 q-mt-sm">Chart components:</div>
@@ -50,7 +53,7 @@
         color="black"
         @update:model-value="onUpdateActiveBar"
       />
-      <div class="text-caption text-italic">Standard Error / Deviation data are not available for upazila level charts</div>
+      <div class="text-caption text-italic">Standard Error / Deviation data are not available for {{ activeCountry.admNames[2] }} level charts</div>
 
       <q-checkbox
         v-model="showCI"
@@ -58,7 +61,7 @@
         color="black"
         @update:model-value="onUpdateShowCI"
       />
-      <div class="text-caption text-italic">Confidence Intervals data are not available for upazila level charts</div>
+      <div class="text-caption text-italic">Confidence Intervals data are not available for {{ activeCountry.admNames[2] }} level charts</div>
 
       <q-checkbox
         v-model="showTraps"
@@ -71,7 +74,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, computed } from 'vue'
+import { defineComponent, ref, computed, watch } from 'vue'
 import { useStore } from 'vuex'
 
 export default defineComponent({
@@ -85,32 +88,37 @@ export default defineComponent({
 
       selectedAreaOnly = ref(true),
       selectedSubAreas = ref([1, 2]),
-      activeParamsIndex = ref([1, 2, 3, 4]),
       activeBar = ref('se'),
       showCI = ref(true),
       showTraps = ref(true),
 
       activeSeason = computed(() => getters.activeSeason),
       activeCountry = computed(() => getters.activeCountry),
+      activeParams = ref([...activeSeason.value.params.map(param => param.keyParam)]),
 
       onUpdateSelectedSubAreas = val => { emit('update:selectedSubAreas', val) },
       onUpdateSelectedAreaOnly = val => { emit('update:selectedAreaOnly', val) },
-      onUpdateActiveParamsIndex = val => { emit('update:activeParamsIndex', val) },
+      onUpdateActiveParams = val => { emit('update:activeParams', val) },
       onUpdateActiveBar = val => { emit('update:activeBar', val) },
       onUpdateShowCI = val => { emit('update:showCI', val) },
       onUpdateShowTraps = val => { emit('update:showTraps', val) }
 
+    watch(activeSeason, val => {
+      activeParams.value = [...val.params.map(param => param.keyParam)]
+      emit('update:activeParams', [...val.params.map(param => param.keyParam)])
+    })
+
     return {
       selectedAreaOnly,
       selectedSubAreas,
-      activeParamsIndex,
+      activeParams,
       activeBar,
       showCI,
       showTraps,
 
       onUpdateSelectedSubAreas,
       onUpdateSelectedAreaOnly,
-      onUpdateActiveParamsIndex,
+      onUpdateActiveParams,
       onUpdateActiveBar,
       onUpdateShowCI,
       onUpdateShowTraps,

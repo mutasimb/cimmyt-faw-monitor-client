@@ -1,5 +1,7 @@
 <template>
-  <div class="plot-wrapper" ref="plotWrapper"><q-resize-observer @resize="onResize"/></div>
+  <div class="plot-wrapper" ref="plotWrapper">
+    <q-resize-observer @resize="onResize"/>
+  </div>
 </template>
 
 <script>
@@ -13,7 +15,7 @@ import { timeFormat } from 'd3-time-format'
 export default defineComponent({
   name: 'ComponetSinglePlot',
   props: {
-    param: { type: String, required: true },
+    param: { type: Object, required: true },
     level: { type: Number, required: true },
     tsData: { type: Array, required: true },
     controls: { type: Object, required: true }
@@ -27,30 +29,19 @@ export default defineComponent({
       colorBars = '#ff00ff',
       colorMoth = '#d95f0e',
       colorInfestation = '#31a354',
-      { state, getters } = useStore(),
+      { getters } = useStore(),
       activeSeason = () => getters.activeSeason,
-      activeCrop = () => state.seasons.activeCrop,
       timesteps = props.tsData.map(el => el.timestep),
-      isFirstBox = () => props.controls.activeParams.indexOf(props.param) === 0,
-      isLastBox = () => props.controls.activeParams.length - 1 === props.controls.activeParams.indexOf(props.param),
-      paramNames = () => {
-        switch (props.param) {
-          case 'sfw':
-            return { yAxis: 'SFW Infestation (%)' }
-          case 'iw':
-            return { yAxis: activeCrop() === 'Maize' ? 'IW Infestation (%)' : 'IP Infestation (%)' }
-          case 'cob':
-            return { yAxis: 'Cob Infestation (%)' }
-          case 'moth':
-            return { yAxis: 'Moth Count (/ day / trap)' }
-          default:
-            return null
-        }
-      },
+      isFirstBox = () => props.controls.activeParams.findIndex(
+        activeParam => activeParam.keyParam === props.param.keyParam
+      ) === 0,
+      isLastBox = () => props.controls.activeParams.findIndex(
+        activeParam => activeParam.keyParam === props.param.keyParam
+      ) === (props.controls.activeParams.length - 1),
       domainX = () => extent(timesteps).map((el, i) => timeWeek.offset(el, i === 0 ? -1 : 1)),
       domainY = () => {
         const
-          param = props.param === 'moth' ? 'count' : 'infestation',
+          param = props.param.keyParam === 'count' ? 'count' : 'infestation',
           possibleMins = [0],
           possibleMaxs = [activeSeason().extents[`u_${param}_${props.level < 3 ? '012' : '3'}`]]
 
@@ -82,7 +73,7 @@ export default defineComponent({
       }),
       chartScaleY = () => ({
         domain: domainY(),
-        label: paramNames().yAxis,
+        label: props.param.abbParam + ' (' + props.param.unit + ')',
         labelAnchor: 'center'
       }),
       areaMark = () => {
@@ -91,11 +82,15 @@ export default defineComponent({
         if (props.controls.showCI) {
           mark.push(areaY(props.tsData, {
             x: 'timestep',
-            y1: d => d[props.param] || d[props.param] === 0
-              ? d[props.param] - d[props.param + '_' + 'ci'] : null,
-            y2: d => d[props.param] || d[props.param] === 0
-              ? d[props.param] + d[props.param + '_' + 'ci'] : null,
-            fill: props.param === 'moth' ? colorMoth : colorInfestation,
+            y1: d => d[props.param.keyParam] || d[props.param.keyParam] === 0
+              ? d[props.param.keyParam] - d[props.param.keyParam + '_' + 'ci']
+              : null,
+            y2: d => d[props.param.keyParam] || d[props.param.keyParam] === 0
+              ? d[props.param.keyParam] + d[props.param.keyParam + '_' + 'ci']
+              : null,
+            fill: props.param.keyParam === 'count'
+              ? colorMoth
+              : colorInfestation,
             fillOpacity: 0.35
           }))
         }
@@ -109,11 +104,11 @@ export default defineComponent({
             x: 'timestep',
             y: d => {
               const
-                y = d[props.param] + yPerPixel() * 10,
+                y = d[props.param.keyParam] + yPerPixel() * 10,
                 possibleElevates = []
 
-              if (d.traps > 1 && props.level < 3 && props.controls.activeBar) possibleElevates.push(d[props.param + '_' + props.controls.activeBar])
-              if (d.traps > 1 && props.level < 3 && props.controls.showCI) possibleElevates.push(d[props.param + '_' + 'ci'])
+              if (d.traps > 1 && props.level < 3 && props.controls.activeBar) possibleElevates.push(d[props.param.keyParam + '_' + props.controls.activeBar])
+              if (d.traps > 1 && props.level < 3 && props.controls.showCI) possibleElevates.push(d[props.param.keyParam + '_' + 'ci'])
 
               return y + (possibleElevates.length ? Math.max(...possibleElevates) : 0)
             },
@@ -124,14 +119,14 @@ export default defineComponent({
         if (props.controls.showTraps) marks.push(trapCounts)
         marks.push(dot(props.tsData, {
           x: 'timestep',
-          y: d => d[props.param],
+          y: d => d[props.param.keyParam],
           r: 3,
-          fill: props.param === 'moth' ? colorMoth : colorInfestation
+          fill: props.param.keyParam === 'count' ? colorMoth : colorInfestation
         }))
         marks.push(line(props.tsData, {
           x: 'timestep',
-          y: d => d[props.param],
-          stroke: props.param === 'moth' ? colorMoth : colorInfestation
+          y: d => d[props.param.keyParam],
+          stroke: props.param.keyParam === 'count' ? colorMoth : colorInfestation
         }))
 
         return marks
@@ -143,10 +138,12 @@ export default defineComponent({
           marks.push(
             ruleX(props.tsData, {
               x: 'timestep',
-              y1: d => d[props.param] || d[props.param] === 0
-                ? (d[props.param] - d[props.param + '_' + props.controls.activeBar]) : null,
-              y2: d => d[props.param] || d[props.param] === 0
-                ? (d[props.param] + d[props.param + '_' + props.controls.activeBar]) : null,
+              y1: d => d[props.param.keyParam] || d[props.param.keyParam] === 0
+                ? (d[props.param.keyParam] - d[props.param.keyParam + '_' + props.controls.activeBar])
+                : null,
+              y2: d => d[props.param.keyParam] || d[props.param.keyParam] === 0
+                ? (d[props.param.keyParam] + d[props.param.keyParam + '_' + props.controls.activeBar])
+                : null,
               stroke: colorBars,
               strokeWidth: 1.5
             })
@@ -155,8 +152,9 @@ export default defineComponent({
             ruleY(props.tsData, {
               x1: d => new Date(d.timestep.getTime() - Math.round(xPerPixel(width) * 5)),
               x2: d => new Date(d.timestep.getTime() + Math.round(xPerPixel(width) * 5)),
-              y: d => d[props.param] || d[props.param] === 0
-                ? (d[props.param] - d[props.param + '_' + props.controls.activeBar]) : null,
+              y: d => d[props.param.keyParam] || d[props.param.keyParam] === 0
+                ? (d[props.param.keyParam] - d[props.param.keyParam + '_' + props.controls.activeBar])
+                : null,
               stroke: colorBars,
               strokeWidth: 1
             })
@@ -165,8 +163,8 @@ export default defineComponent({
             ruleY(props.tsData, {
               x1: d => new Date(d.timestep.getTime() - Math.round(xPerPixel(width) * 5)),
               x2: d => new Date(d.timestep.getTime() + Math.round(xPerPixel(width) * 5)),
-              y: d => d[props.param] || d[props.param] === 0
-                ? (d[props.param] + d[props.param + '_' + props.controls.activeBar]) : null,
+              y: d => d[props.param.keyParam] || d[props.param.keyParam] === 0
+                ? (d[props.param.keyParam] + d[props.param.keyParam + '_' + props.controls.activeBar]) : null,
               stroke: colorBars,
               strokeWidth: 1
             })

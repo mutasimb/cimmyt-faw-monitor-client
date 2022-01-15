@@ -13,7 +13,7 @@
           :area="{ level: 0, name: activeCountry.name }"
           :country="activeCountry"
           :controls="{
-            activeParams: activeCrop === 'Maize' ? [1,2,3,4] : [1,2,3],
+            activeParams: activeSeason.params,
             showTraps: true,
             activeBar: 'se',
             showCI: true

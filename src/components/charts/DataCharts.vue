@@ -1,16 +1,25 @@
 <template>
   <div class="area-wrapper">
-    <div class="text-h5 text-left q-mx-auto" style="max-width: 640px">{{areaText}}</div>
-    <div class="text-subtitle2 text-left q-mx-auto" style="max-width: 640px">{{
-      !area.level || area.level === 0 ? 'National' : country.admNames[area.level - 1]
-    }} level aggregated data</div>
-    <Chart v-for="param in activeParams"
-      :key="param"
-      :param="param"
-      :level="area.level"
-      :tsData="paramValues"
-      :controls="{ ...controls, activeParams }"
-    />
+    <div
+      class="text-h5 text-left q-mx-auto"
+      style="max-width: 640px"
+    >{{areaText}}</div>
+    <div
+      class="text-subtitle2 text-left q-mx-auto"
+      style="max-width: 640px"
+    >{{ !area.level || area.level === 0 ? 'National' : country.admNames[area.level - 1] }} level aggregated data</div>
+    <p v-if="areaData.length === 0"
+      class="text-subtitle1 text-left q-mx-auto q-mt-md"
+      style="max-width: 640px"
+    >No data available to be shown for this area of the selected season!</p>
+    <template v-for="(param, i) in controls.activeParams" :key="param['keyParam']">
+      <Chart v-if="paramTimeseriesValues[i].length > 0"
+        :param="param"
+        :level="area.level"
+        :tsData="paramTimeseriesValues[i]"
+        :controls="controls"
+      />
+    </template>
   </div>
 </template>
 
@@ -43,48 +52,34 @@ export default defineComponent({
               : `${name} ${props.country.admNames[2]}, ${parentNames[1]}`
       }),
       selectedAreaTimesteps = computed(() => props.areaData.map(el => el.timestep)),
-      paramValues = computed(() => props.timesteps.map(el => {
-        const i = selectedAreaTimesteps.value.indexOf(el)
-        return {
-          timestep: isoParse(el),
-          traps: i > -1 ? props.areaData[i].traps : null,
-          moth: i > -1 ? props.areaData[i].count_pdpt : null,
-          moth_sd: i > -1 ? props.areaData[i].count_sd : null,
-          moth_se: i > -1 ? props.areaData[i].count_se : null,
-          moth_ci: i > -1 ? props.areaData[i].count_ci95 : null,
-          sfw: i > -1 ? props.areaData[i].sfw_percent : null,
-          sfw_sd: i > -1 ? props.areaData[i].sfw_sd : null,
-          sfw_se: i > -1 ? props.areaData[i].sfw_se : null,
-          sfw_ci: i > -1 ? props.areaData[i].sfw_ci95 : null,
-          iw: i > -1 ? props.areaData[i].iw_percent : null,
-          iw_sd: i > -1 ? props.areaData[i].iw_sd : null,
-          iw_se: i > -1 ? props.areaData[i].iw_se : null,
-          iw_ci: i > -1 ? props.areaData[i].iw_ci95 : null,
-          cob: i > -1 ? props.areaData[i].cob_percent : null,
-          cob_sd: i > -1 ? props.areaData[i].cob_sd : null,
-          cob_se: i > -1 ? props.areaData[i].cob_se : null,
-          cob_ci: i > -1 ? props.areaData[i].cob_ci95 : null
-        }
-      })),
-      activeParams = computed(() => props.controls.activeParams.map(el => {
-        switch (el) {
-          case 1:
-            return 'moth'
-          case 2:
-            return 'sfw'
-          case 3:
-            return 'iw'
-          case 4:
-            return 'cob'
-          default:
-            return ''
-        }
-      }))
+      paramTimeseriesValues = computed(() => props.controls.activeParams.map(
+        activeParam => props.timesteps.map(timestep => {
+          const i = selectedAreaTimesteps.value.indexOf(timestep)
+
+          return {
+            timestep: isoParse(timestep),
+            traps: i > -1
+              ? props.areaData[i].traps
+              : null,
+            [activeParam.keyParam]: i > -1
+              ? props.areaData[i][activeParam.keyParam + '_' + activeParam.keyUnit]
+              : null,
+            [activeParam.keyParam + '_sd']: i > -1
+              ? props.areaData[i][activeParam.keyParam + '_sd']
+              : null,
+            [activeParam.keyParam + '_se']: i > -1
+              ? props.areaData[i][activeParam.keyParam + '_se']
+              : null,
+            [activeParam.keyParam + '_ci']: i > -1
+              ? props.areaData[i][activeParam.keyParam + '_ci95']
+              : null
+          }
+        })
+      ))
 
     return {
       areaText,
-      paramValues,
-      activeParams
+      paramTimeseriesValues
     }
   }
 })

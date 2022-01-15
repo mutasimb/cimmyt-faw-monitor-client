@@ -13,7 +13,7 @@
         :selectedArea="selectedArea"
         @update:selectedAreaOnly="onUpdateSelectedAreaOnly"
         @update:selectedSubAreas="onUpdateSelectedSubAreas"
-        @update:activeParamsIndex="onUpdateActiveParamsIndex"
+        @update:activeParams="onUpdateActiveParams"
         @update:activeBar="onUpdateActiveBar"
         @update:showCI="onUpdateShowCI"
         @update:showTraps="onUpdateShowTraps"
@@ -26,11 +26,12 @@
 
         <template v-else-if="showCharts">
         <Charts v-if="selectedAreaOnly"
+          :key="selectedArea ? selectedArea._id : 'country'"
           :timesteps="timesteps"
           :areaData="displayAggregatedData"
           :area="selectedArea || { level: 0, name: activeCountry.name }"
           :country="activeCountry"
-          :controls="{ activeParams: activeParams.sort(), showTraps, activeBar, showCI }"
+          :controls="{ activeParams, showTraps, activeBar, showCI }"
         />
         <Charts v-else v-for="displayArea in displayAreas"
           :key="displayArea._id ? displayArea._id : 'country'"
@@ -42,12 +43,7 @@
           )"
           :area="displayArea"
           :country="activeCountry"
-          :controls="{
-            activeParams: activeParams.sort(),
-            showTraps,
-            activeBar,
-            showCI
-          }"
+          :controls="{ activeParams, showTraps, activeBar, showCI }"
         />
         </template>
 
@@ -83,13 +79,21 @@ export default defineComponent({
       additionalFilters = ref(false),
       selectedAreaOnly = ref(true),
       selectedSubAreas = ref([1, 2]),
-      activeParamsIndex = ref([1, 2, 3, 4]),
       showTraps = ref(true),
       activeBar = ref('se'),
       showCI = ref(true),
 
       activeSeason = computed(() => getters.activeSeason),
       activeCrop = computed(() => state.seasons.activeCrop),
+      activeParams = ref([...activeSeason.value.params.map(param => param.keyParam)]),
+      activeParamsComputed = computed(
+        () => activeSeason.value.params
+          .filter(
+            param => activeParams.value
+              .indexOf(param.keyParam) > -1
+          )
+      ),
+
       displayAggregatedData = computed(
         () => !getters.activeSeasonAggregatedData.length ? []
           : getters.activeSeasonAggregatedData.filter(
@@ -129,16 +133,12 @@ export default defineComponent({
         getters.activeCountry &&
         displayAggregatedData.value.length
       )),
-      activeParams = computed(
-        () => activeCrop.value === 'Maize' ? activeParamsIndex.value
-          : activeParamsIndex.value.filter(el => el < 4)
-      ),
       onUpdateSelectedAreaOnly = event => {
         selectedAreaOnly.value = event
         if (!event) dispatch('getAggregatedData', { season: activeSeason.value._id })
       },
       onUpdateSelectedSubAreas = event => { selectedSubAreas.value = event },
-      onUpdateActiveParamsIndex = event => { activeParamsIndex.value = event },
+      onUpdateActiveParams = event => { activeParams.value = event },
       onUpdateActiveBar = event => { activeBar.value = event },
       onUpdateShowCI = event => { showCI.value = event },
       onUpdateShowTraps = event => { showTraps.value = event }
@@ -146,17 +146,14 @@ export default defineComponent({
     watch(selectedArea, val => {
       dispatch('getAggregatedData', { season: activeSeason.value._id, area: val ? val._id : 'country' })
     })
-    watch(activeSeason, () => {
-      selectedArea.value = null
-    })
+    watch(activeSeason, () => { selectedArea.value = null })
 
     return {
       selectedArea,
       additionalFilters,
       selectedAreaOnly,
       selectedSubAreas,
-      activeParamsIndex,
-      activeParams,
+      activeParams: activeParamsComputed,
       showTraps,
       activeBar,
       showCI,
@@ -170,7 +167,7 @@ export default defineComponent({
       showCharts,
       onUpdateSelectedAreaOnly,
       onUpdateSelectedSubAreas,
-      onUpdateActiveParamsIndex,
+      onUpdateActiveParams,
       onUpdateActiveBar,
       onUpdateShowCI,
       onUpdateShowTraps
