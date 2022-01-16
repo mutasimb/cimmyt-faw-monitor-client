@@ -13,6 +13,7 @@
         :error-message="disableSeasonSelection ? 'Sorry! You are not enlisted as a data collector for any of the active seasons.' : null"
         :error="disableSeasonSelection"
         label="Select Season"
+        :readonly="userEditSeasons.length === 1 && userEditSeasons[0]._id === userDefaultSeason._id"
       />
       <q-stepper-navigation class="text-right">
         <q-btn style="min-width: 105px;" type="submit" color="black" label="Next" :disable="disableSubmission"/>
@@ -33,6 +34,7 @@ export default defineComponent({
       form = computed(() => state.forms.activeForm),
       season = computed({ get: () => form.value.season, set: val => { commit('mutateForm', ['season', val]) } }),
       userEditSeasons = computed(() => getters.userEditSeasons),
+      userDefaultSeason = computed(() => getters.userDefaultSeason),
       disableSeasonSelection = computed(() => userEditSeasons.value.filter(el => 'closed' in el && !el.closed).length === 0),
       disableSubmission = computed(() => !season.value),
       onSubmit = () => { emit('nextStep') }
@@ -51,7 +53,7 @@ export default defineComponent({
       }
     )
 
-    return { season, userEditSeasons, disableSeasonSelection, disableSubmission, onSubmit }
+    return { season, userEditSeasons, userDefaultSeason, disableSeasonSelection, disableSubmission, onSubmit }
   }
 })
 </script>

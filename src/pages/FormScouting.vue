@@ -95,7 +95,7 @@ export default defineComponent({
           dialog.value = false
           messages.value = []
 
-          if (dialogType.value === 'success') router.push({ name: 'dashboard' })
+          if (dialogType.value === 'success') router.push({ name: 'dashboard-home' })
           dialogType.value = ''
         }
       },
@@ -144,8 +144,12 @@ export default defineComponent({
         )
       }
 
-      const selectableEditSeasons = getters.userEditSeasons.map(el => !el.closed)
-      if (selectableEditSeasons.length === 1) commit('mutateForm', ['season', selectableEditSeasons[0]])
+      const selectableEditSeasons = getters.userEditSeasons.filter(el => !el.closed)
+      if (selectableEditSeasons.length === 1) {
+        commit('mutateForm', ['season', selectableEditSeasons[0]])
+      } else if (selectableEditSeasons.map(season => season._id).indexOf(getters.userDefaultSeason._id) > -1) {
+        commit('mutateForm', ['season', getters.userDefaultSeason])
+      }
     })
 
     onBeforeUnmount(() => {
