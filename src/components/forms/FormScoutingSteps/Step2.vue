@@ -73,7 +73,7 @@ export default defineComponent({
         ) return []
 
         return userTraps.value
-          .filter(el => el.area._id === area.value._id)
+          .filter(el => el.area && '_id' in el.area ? el.area._id === area.value._id : false)
           .map(el => ({ value: el._id, label: el.tag }))
       }),
       disableSubmission = computed(() => !crop.value || !area.value || !trap.value),
