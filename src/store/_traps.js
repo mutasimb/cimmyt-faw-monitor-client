@@ -1,18 +1,19 @@
 import { api } from '../boot/axios'
 
 export default {
-  status: {
+  state: {
     loading: false,
     userData: []
     // allTraps: []
   },
-  // getters: {
-  //   activeSeasonTraps: (state, getters) => state.userTraps
-  //     .filter(el => el.season === getters.activeSeason._id),
-  //   trapAreas: (_, getters) => getters.activeSeasonTraps
-  //     .map(el => el.area)
-  //     .filter((el, i, arr) => arr.map(el1 => el1.gid).indexOf(el.gid) === i)
-  // },
+  getters: {
+    activeSeasonTraps: (state, _, __, rootGetters) =>
+      !state.userData.length || !rootGetters.activeSeason || state.loading ? []
+        : state.userData.filter(el => el.season === rootGetters.activeSeason._id)
+    // trapAreas: (_, getters) => getters.activeSeasonTraps
+    //   .map(el => el.area)
+    //   .filter((el, i, arr) => arr.map(el1 => el1.gid).indexOf(el.gid) === i)
+  },
   mutations: {
     setTrapsLoadingState: (state, data) => { state.loading = data },
     setTrapsUserData: (state, data) => { state.userData = data },
@@ -20,7 +21,7 @@ export default {
     // setAllTraps: (state, data) => { state.allTraps = data.traps }
   },
   actions: {
-    getTrapsUserData ({ commit }) {
+    getTrapsUserData: ({ commit }) => {
       return new Promise((resolve, reject) => {
         commit('setTrapsLoadingState', true)
 

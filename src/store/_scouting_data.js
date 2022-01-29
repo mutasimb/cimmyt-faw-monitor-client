@@ -6,6 +6,11 @@ export default {
     userData: []
     // trapScoutings: []
   },
+  getters: {
+    activeSeasonScoutings: (state, _, __, rootGetters) =>
+      !state.userData.length || !rootGetters.activeSeason || state.loading ? []
+        : state.userData.filter(el => el.season === rootGetters.activeSeason._id)
+  },
   mutations: {
     setScoutingsLoadingState: (state, data) => { state.loading = data },
     setScoutingsUserData: (state, data) => { state.userData = data },
@@ -13,7 +18,7 @@ export default {
     setTrapScoutings: (state, data) => { state.trapScoutings = !data ? [] : data }
   },
   actions: {
-    getScoutingsUserData ({ commit }) {
+    getScoutingsUserData: ({ commit }) => {
       return new Promise((resolve, reject) => {
         commit('setScoutingsLoadingState', true)
 
@@ -29,7 +34,7 @@ export default {
           })
       })
     },
-    getTrapScoutings ({ commit }, trapId) {
+    getTrapScoutings: ({ commit }, trapId) => {
       commit('setTrapScoutings', [])
       // eslint-disable-next-line no-async-promise-executor
       return new Promise(async (resolve, reject) => {
