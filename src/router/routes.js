@@ -31,6 +31,12 @@ const routes = [
         path: 'charts',
         component: () => import('pages/Charts.vue'),
         meta: { title: 'Charts', mode: 'data' }
+      },
+      {
+        name: 'data-traps-progress',
+        path: 'traps-progress',
+        component: () => import('pages/TrapsProgress.vue'),
+        meta: { title: 'Progress: Trap Registration', mode: 'data' }
       }
       // {
       //   name: 'data-bubble-plot',
@@ -56,6 +62,12 @@ const routes = [
         path: 'charts',
         component: () => import('pages/Charts.vue'),
         meta: { authRequired: true, title: 'Charts', mode: 'user' }
+      },
+      {
+        name: 'dashboard-traps-progress',
+        path: 'traps-progress',
+        component: () => import('pages/TrapsProgress.vue'),
+        meta: { authRequired: true, title: 'Progress: Trap Registration', mode: 'user' }
       },
       // {
       //   name: 'dashboard-bubble-plot',

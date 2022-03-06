@@ -34,12 +34,12 @@
           :controls="{ activeParams, showTraps, activeBar, showCI }"
         />
         <Charts v-else v-for="displayArea in displayAreas"
-          :key="displayArea._id ? displayArea._id : 'country'"
+          :key="displayArea['_id'] ? displayArea['_id'] : 'country'"
           :timesteps="timesteps"
           :areaData="displayAggregatedData.filter(
-            el => displayArea.level === 0
+            el => displayArea['level'] === 0
               ? el.level === 0
-              : displayArea._id === el.adm
+              : displayArea['_id'] === el.adm
           )"
           :area="displayArea"
           :country="activeCountry"
@@ -152,7 +152,6 @@ export default defineComponent({
       selectedArea,
       additionalFilters,
       selectedAreaOnly,
-      selectedSubAreas,
       activeParams: activeParamsComputed,
       showTraps,
       activeBar,
