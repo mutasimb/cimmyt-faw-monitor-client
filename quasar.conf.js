@@ -74,7 +74,7 @@ module.exports = configure(function (ctx) {
       env: {
         API: ctx.dev
           ? 'http://localhost:9001'
-          : 'https://faw-monitor.herokuapp.com'
+          : 'https://cimmyt-faw-monitor-server.onrender.com'
       }
     },
 
