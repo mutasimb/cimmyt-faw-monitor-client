@@ -10,6 +10,7 @@ import countries from './_countries.js'
 import gadm from './_gadm.js'
 import areas from './_areas.js'
 import aggData from './_aggregated_data.js'
+import climate from './_climate.js'
 
 /*
  * If not building with SSR mode, you can
@@ -31,7 +32,8 @@ export default store(function (/* { ssrContext } */) {
       countries,
       gadm,
       areas,
-      aggData
+      aggData,
+      climate
     },
 
     // enable strict mode (adds overhead!)

@@ -45,6 +45,7 @@ export default defineComponent({
 
     dispatch('getTrapsUserData')
     dispatch('getScoutingsUserData')
+    dispatch('getClimateUserData')
 
     return {
       left,

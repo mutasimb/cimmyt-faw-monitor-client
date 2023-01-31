@@ -86,6 +86,12 @@ const routes = [
         path: 'scouting-data',
         component: () => import('pages/FormScouting.vue'),
         meta: { authRequired: true, title: 'Scouting', mode: 'user' }
+      },
+      {
+        name: 'climate-advisory',
+        path: 'climate-advisory',
+        component: () => import('pages/ClimateAdvisory.vue'),
+        meta: { authRequired: true, title: 'Climate Advisory', mode: 'user' }
       }
     ]
   },

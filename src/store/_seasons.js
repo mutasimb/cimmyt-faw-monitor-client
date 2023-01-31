@@ -56,10 +56,12 @@ export default {
           })
       })
     },
-    selectSeason ({ dispatch, commit }, { season }) {
+    selectSeason ({ rootState, dispatch, commit }, { season }) {
       commit('setActiveSeason', season)
       dispatch('getSeasonAreas', { season })
       dispatch('getAggregatedData', { season })
+      // eslint-disable-next-line no-extra-boolean-cast
+      if (!!rootState.auth.user) dispatch('getClimateUserData', { season })
     }
   }
 }

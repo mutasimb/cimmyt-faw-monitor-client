@@ -50,6 +50,11 @@
       <q-item-label header>Monitoring: Field Data</q-item-label>
 
       <ListItem route="dashboard-traps-progress" icon="checklist" label="Trap Registration Progress" />
+
+      <q-separator spaced />
+      <q-item-label header>Climate</q-item-label>
+
+      <ListItem route="climate-advisory" icon="sunny" label="Climate Advisory" />
     </template>
   </q-list>
 </template>
